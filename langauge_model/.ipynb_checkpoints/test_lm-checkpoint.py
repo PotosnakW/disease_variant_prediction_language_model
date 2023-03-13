@@ -30,11 +30,15 @@ with torch.no_grad():
     
 embedding = embedding.last_hidden_state.cpu().numpy()
 
-features = [] 
+features = [] #[L, 1024] where L is the length of each sequence
 for seq_num in range(len(embedding)):
     seq_len = (attention_mask[seq_num] == 1).sum()
     seq_emd = embedding[seq_num][:seq_len-1]
     features.append(seq_emd)
+    
+    
+# if you want to derive a single representation (per-protein embedding) for the whole protein
+# protein_embedding = embedding.mean(dim=0) # shape (1024)
     
 with open("test", "wb") as fp:
     pickle.dump(features, fp)
