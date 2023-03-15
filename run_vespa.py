@@ -9,5 +9,5 @@ os.system(f'CUDA_VISIBLE_DEVICES=1,2,3 vespa_emb data/sequences.fasta -o {save_d
 
 os.system(f'CUDA_VISIBLE_DEVICES=1,2,3 vespa_conspred {save_dir}/data/embeddings.h5 -o {save_dir}/data/conspred.h5')
 
-os.system(f'CUDA_VISIBLE_DEVICES=1,2,3 vespa_logodds {save_dir}/data/sequences.fasta -o {save_dir}/data/logodds.h5')
+os.system(f'CUDA_VISIBLE_DEVICES=1,2,3 vespa_logodds {save_dir}/data/sequences.fasta -o {save_dir}/data/logodds.h5 -m {save_dir}/data/mutations.txt')
 

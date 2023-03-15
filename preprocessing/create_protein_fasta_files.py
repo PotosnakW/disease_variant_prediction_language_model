@@ -1,29 +1,56 @@
 import pandas as pd
 import numpy as np
 import os
+import re
 
-data_dir = '/home/scratch/wpotosna/disease_variant_prediction_language_model/data'
+data_dir = '/home/scratch/wpotosna/data'
 
-labels = pd.read_csv(eve_data_dir+'/labels/ClinVar_labels_P53_PTEN_RASH_SCN5A.csv')
+labels = pd.read_csv(data_dir+'/labels/PTEN_ClinVar_labels.csv')
 
-def get_protein_seq_from_txt(file_dir):
+def get_protein_seq_from_txt(file_dir, labels):
     f = open(file_dir,'r')
     txt = f.readlines()
-    name = txt[0].split('|')[2].split(' ')[0].replace('_', '-')
+    protein_name = txt[0].split('|')[2].split(' ')[0]
     seq = txt[1:]
     seq = ' '.join(seq).replace('\n', '').replace(' ', '')
     
-    return {name:seq}
+    checked_seq, valid_mutations = check_sequence(protein_name, seq, labels)
+    
+    return protein_name.replace('_', '-'), checked_seq, valid_mutations
+    
+def check_sequence(protein_name, seq, labels):
+    protein_mutations = labels[labels.protein_name==protein_name].mutations.values
+    
+    valid_mutations = []
+    for mutation in protein_mutations:
+        pos_idx = int(re.sub("[^0-9]","", mutation))-1
+        orig_aa = mutation[0]
 
+        if pos_idx > len(seq):
+            continue
+            
+        elif seq[pos_idx] != orig_aa:
+            continue
+        else:
+            valid_mutations.append(protein_name.replace('_', '-')+'_'+mutation) 
+    
+    if len(valid_mutations) != 0:
+        checked_seq = seq
+    else:
+        checked_seq = None
 
-# CREATE SEQUENCE FILE:
+    return checked_seq, valid_mutations
+
+# CREATE sequence.fasta and mutations.txt files:
 sequences = {}
-for file in os.listdir(data_dir+'/protein_seq'):
+mutations = []
+for file in os.listdir(data_dir+'/wildtype_protein_sequences'):
     if file != '.ipynb_checkpoints':
-        seq = get_protein_seq_from_txt(data_dir+'/protein_seq/'+file)
-        sequences[list(seq.keys())[0]] = list(seq.values())[0]
-        
-        
+        pn, cs, vm = get_protein_seq_from_txt(data_dir+'/wildtype_protein_sequences/'+file, labels)
+        if cs is not None:
+            sequences[pn] = cs
+            mutations.extend(vm)
+            
 output_file = open(data_dir+'/sequences.fasta','w')
 
 for seq_id, seq in sequences.items():
@@ -31,21 +58,8 @@ for seq_id, seq in sequences.items():
     output_file.write(identifier_line)
     sequence_line = seq + "\n"
     output_file.write(sequence_line)
-    
 output_file.close()
 
-# Show results
-# input_file = open(data_dir+'/sequences.fasta')
-# for line in input_file:
-#     print(line.strip())
-
-
-# CREATE MUTATION FILE:
-mlist = []
-for name, mutation in zip(labels.protein_name, labels.mutations):
-    mut_str = name.replace('_', '-')+'_'+mutation
-    mlist.append(mut_str)
-    
-with open(data_dir+'/mutation.txt', 'w') as f:
-    for line in mlist:
+with open(data_dir+'/mutations.txt', 'w') as f:
+    for line in mutations:
         f.write(f"{line}\n")
