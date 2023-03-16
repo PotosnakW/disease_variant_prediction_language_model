@@ -34,7 +34,7 @@ def check_sequence(protein_name, seq, labels):
         else:
             valid_mutations.append(protein_name.replace('_', '-')+'_'+mutation) 
     
-    if len(valid_mutations) != 0:
+    if len(valid_mutations) >= 2:
         checked_seq = seq
     else:
         checked_seq = None
