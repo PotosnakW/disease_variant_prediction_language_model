@@ -160,6 +160,7 @@ class MSA_processing:
                         return 0.0 #return 0 weight if sequence is fully empty
                 self.weights = np.array(list(map(compute_weight,list_seq)))
                 np.save(file=self.weights_location, arr=self.weights)
+                print("Complete")
         else:
             # If not using weights, use an isotropic weight matrix
             print("Not weighting sequence data")
