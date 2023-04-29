@@ -14,7 +14,7 @@ output_evol_indices_location='/xfsdata/wpotosna/EVE_results/evol_indices'
 num_samples_compute_evol_indices=20000
 batch_size=256
 
-for i in range(58, 103):
+for i in range(74, 80):
     print(i)
     print('Training VAE Model')
     os.system(f'python ./EVE_algorithm/train_VAE.py \
@@ -43,3 +43,5 @@ for i in range(58, 103):
         --batch_size {batch_size}')
     
 print('Complete')
+
+#protein ind issues: #58, 65, 70, 73

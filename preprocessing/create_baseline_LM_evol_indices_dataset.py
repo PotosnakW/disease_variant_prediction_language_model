@@ -1,4 +1,5 @@
-import pandas as p
+import pandas as pd
+import os
 
 base_dir = '/xfsdata/wpotosna'
 data_dir = base_dir+'/disease_variant_prediction_language_model/data'
@@ -26,6 +27,6 @@ dataset.drop(index=dataset[dataset.protein_name=='ALAT2_HUMAN'].index.values[0],
 # EVE computes negative log ratio: -(log(Xv) - log(Xw))
 dataset.evol_indices = dataset.evol_indices*(-1)
 dataset.sort_values(by='protein_name', inplace=True)
-dataset.reset_index(inplace=True)
+dataset.reset_index(inplace=True, drop=True)
 
-dataset.to_csv(base_dir+'/disease_variant_prediction_langauge_model/data/Baseline_LM_evol_indices_dataset.csv', index=False)
+dataset.to_csv(base_dir+'/disease_variant_prediction_language_model/data/baseline_LM_evol_indices_dataset.csv', index=False)

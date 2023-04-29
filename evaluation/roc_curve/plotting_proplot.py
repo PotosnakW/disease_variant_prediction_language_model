@@ -211,7 +211,10 @@ class ROC_Curve_proplot:
     """
 
     if self.legend_location is not None:
-      ax.legend(bbox_to_anchor =(0.5, -0.30), loc=self.legend_location, ncol=1, prop={'size': self.legend_text_size})
+      ax.legend(bbox_to_anchor =(0.5, -0.25), 
+                loc=self.legend_location, 
+                ncol=3, prop={'size': self.legend_text_size}
+               )
     
     if save_dir is not None:
       fig.savefig(save_dir)
